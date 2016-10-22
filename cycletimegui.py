@@ -1,8 +1,10 @@
 from tkinter import *
 from tkinter.ttk import *
-from tkinter.filedialog import askopenfilename #from tkFileDialog import askopenfilename
+from tkinter import filedialog
 from gear import Gear
+
 import os
+import json
 
 
 class MainView(Frame):
@@ -489,8 +491,10 @@ class Control:
         self.filemenu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label = "File", menu=self.filemenu)
         self.filemenu.add_command(label = "New", command=self.newData)
-        self.filemenu.add_command(label = "Open", command=self.loadData)
+        self.filemenu.add_command(label = "Open", command=self.openData)
         self.filemenu.add_command(label = "Save", command=self.saveData)
+        self.filemenu.add_command(label = "Save As...", command=self.saveAs)
+        self.filemenu.add_command(label = "Import", command=self.loadData)
         self.filemenu.add_separator()
         self.filemenu.add_command(label = "Exit", command=root.quit)
         root.config(menu=menubar)
@@ -507,6 +511,13 @@ class Control:
         self.g.addObserver(self.dataUpdate)
         self.g.notify()
         self.statusbar.config(text = "Please input data.")
+
+    def openData(self):
+        self.file_path = filedialog.askopenfilename()
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        self.g.setData(data)
+        self.statusbar.config(text = "File Loaded!")
 
     # input: config file
     # output: CycleTime.data, Gear.data
@@ -582,12 +593,27 @@ class Control:
 
         self.g.setData(data)
 
-        self.statusbar.config(text = "Loaded!")
+        self.statusbar.config(text = ".dat File Imported!")
 
     # input: CycleTime.data, Gear.data
     # output: config file
     def saveData(self):
-        pass
+        if self.file_path:
+            with open(self.file_path, 'w') as f:
+                data = self.g.getData()
+                json.dump(data, f)
+        else:
+            self.file_path = filedialog.asksaveasfilename()
+            with open(self.file_path, 'w') as f:
+                data = self.g.getData()
+                json.dump(data, f)
+
+    def saveAs(self):
+        self.file_path = filedialog.asksaveasfilename()
+        with open(self.file_path, 'w') as f:
+            data = self.g.getData()
+            json.dump(data, f)
+        #self.file_path = filedialog.askopenfilename()
 
     # input:
     def doCalcuate(self):

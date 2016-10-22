@@ -37,7 +37,7 @@ class Gear:
         # notify
         self.notify()
 
-    def getdata(self, data):
+    def getData(self):
         return self.data
 
 
