@@ -514,7 +514,7 @@ class Control:
 
     def openData(self):
         self.file_path = filedialog.askopenfilename()
-        with open(file_path, 'r') as f:
+        with open(self.file_path, 'r') as f:
             data = json.load(f)
         self.g.setData(data)
         self.statusbar.config(text = "File Loaded!")
@@ -601,18 +601,18 @@ class Control:
         if self.file_path:
             with open(self.file_path, 'w') as f:
                 data = self.g.getData()
-                json.dump(data, f)
+                json.dump(data, f, indent=4)
         else:
             self.file_path = filedialog.asksaveasfilename()
             with open(self.file_path, 'w') as f:
                 data = self.g.getData()
-                json.dump(data, f)
+                json.dump(data, f, indent=4)
 
     def saveAs(self):
         self.file_path = filedialog.asksaveasfilename()
         with open(self.file_path, 'w') as f:
             data = self.g.getData()
-            json.dump(data, f)
+            json.dump(data, f, indent=4)
         #self.file_path = filedialog.askopenfilename()
 
     # input:
