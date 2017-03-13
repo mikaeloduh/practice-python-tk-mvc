@@ -1,4 +1,4 @@
-# Cycle Time Estimating Utility
+# Cycle-Time Estimating Utility
 
 The purpose of this project is to develop a tool to estimate machining cycle-time. Makes production planning easier to estimate time cost.
 
