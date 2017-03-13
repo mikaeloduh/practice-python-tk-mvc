@@ -1,13 +1,13 @@
-# Cycle Time Calculator
+# Cycle Time Estimating Utility
 
-The purpose of this project is to develop a calculator to estimate machining cycle time. Makes Production planning easier to estimate time cost.
+The purpose of this project is to develop a tool to estimate machining cycle-time. Makes production planning easier to estimate time cost.
 
 Features:
 
  * Simply input workpiece data and processing parameter
- * Get estimated cycle time in just one click
- * Supported save and load JSON formatted file
- * Compatible with legacy profile, by importing the machine .dat file
+ * Get estimated cycle-time in just one click
+ * Supported save/load in JSON format
+ * Compatible with legacy profile, by importing machine .dat file
 
 
 
