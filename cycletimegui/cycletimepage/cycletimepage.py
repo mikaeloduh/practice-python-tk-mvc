@@ -1,12 +1,11 @@
-# from tkinter import *
-# from tkinter.ttk import *
 import tkinter as tk
-import tkinter.ttk as ttk
+from tkinter import ttk
+# import tkinter.ttk as ttk
 
 
 class CycleTimePage(tk.Frame):
     def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
+        super().__init__(master)
         self.grid()
         self.tabs = ttk.Notebook(self)
         self.createWidgets()

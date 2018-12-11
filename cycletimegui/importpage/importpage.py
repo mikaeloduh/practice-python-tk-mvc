@@ -3,7 +3,7 @@ import tkinter as tk
 
 class ImportPage(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        super().__init__(master)
         self.grid()
         # row 0
         self.partNoLabel = tk.Label(self, text = "Part No.")

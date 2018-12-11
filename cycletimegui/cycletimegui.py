@@ -1,5 +1,5 @@
-from tkinter import *
-from tkinter.ttk import *
+import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 import os
 import json
@@ -8,22 +8,20 @@ from importpage import ImportPage
 from cycletimepage import CycleTimePage
 
 
-class MainView(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master=None)
+class MainView(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
         self.pack()
 
-        self.workIdEntry = Label(self, justify="center")
+        self.workIdEntry = tk.Label(self, justify="center")
         self.workIdEntry.pack()
 
-        self.nb = Notebook(self)
+        self.nb = ttk.Notebook(self)
         self.nb.pack()
         self.nb1 = ImportPage(self.nb)
         self.nb2 = CycleTimePage(self.nb)
         self.nb.add(self.nb1, text="Gear Data")
-        self.nb.pack()
         self.nb.add(self.nb2, text="Machining Cycle")
-        self.nb.pack()
 
     def getData(self):
         pass
@@ -32,18 +30,36 @@ class MainView(Frame):
         self.workIdEntry.config(text = str(data["workID"]))
 
 
-class StatusBar(Label):
+class StatusBar(tk.Label):
     def __init__(self, master):
-        Label.__init__(self, master)
-        self.config(text = "Welcome~~", relief=SUNKEN, anchor=W)
-        self.pack(side=BOTTOM, fill=X)
+        super().__init__(master)
+        self.config(text = "Welcome~~", relief="sunken", anchor="w")
+        self.pack(side="bottom", fill="x")
 
 
 class Control:
     def __init__(self, root):
-        self.view = MainView(root)
-        menubar = Menu(root)
-        self.filemenu = Menu(menubar, tearoff=0)
+        self.root = root
+        self.create_widgets()
+
+        self.newData()
+        self.file_opt = options = {}
+        options['defaultextension'] = '.json'
+        options['filetypes'] = [('all files', '.json')]
+        options['initialdir'] = './'
+        options['initialfile'] = 'data.json'
+        options['title'] = 'Choose a path'
+
+    def create_widgets(self):
+        self.root.title("Cycle Time Calculator")
+
+        self.view = MainView(master=self.root)
+        self.view.nb2.calcuateBtn.config(command=self.doCalcuate)
+
+        self.statusbar = StatusBar(master=self.root)
+
+        menubar = tk.Menu(master=self.root)
+        self.filemenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label = "File", menu=self.filemenu)
         self.filemenu.add_command(label = "New", command=self.newData)
         self.filemenu.add_command(label = "Open", command=self.openData)
@@ -51,18 +67,8 @@ class Control:
         self.filemenu.add_command(label = "Save As...", command=self.saveAs)
         self.filemenu.add_command(label = "Import", command=self.loadData)
         self.filemenu.add_separator()
-        self.filemenu.add_command(label = "Exit", command=root.quit)
-        root.config(menu=menubar)
-        self.statusbar = StatusBar(root)
-        self.view.nb2.calcuateBtn.config(command=self.doCalcuate)
-        self.newData()
-
-        self.file_opt = options = {}
-        options['defaultextension'] = '.json'
-        options['filetypes'] = [('all files', '.json')]
-        options['initialdir'] = './'
-        options['initialfile'] = 'data.json'
-        options['title'] = 'Choose a path'
+        self.filemenu.add_command(label = "Exit", command=self.root.quit)
+        self.root.config(menu=menubar)
 
     def newData(self):
         try:
@@ -240,19 +246,19 @@ class Control:
     def statusText(self, text):
         self.statusbar.config(text = text)
 
-    def readFile(self):
-        filename = askopenfilename()
-        f = open(filename, 'r', encoding="big5")
-        item = data = []
-        for i in range(185):
-            line = f.readline()
-            j = line.find(',')
-            item.append(line[0:j])
-            value.append(line[j+1:])
-        f.close()
+    # def readFile(self):
+    #     filename = filedialog.askopenfilename()
+    #     f = open(filename, 'r', encoding="big5")
+    #     item = data = []
+    #     for i in range(185):
+    #         line = f.readline()
+    #         j = line.find(',')
+    #         item.append(line[0:j])
+    #         value.append(line[j+1:])
+    #     f.close()
 
-        self.app.nb2.setData()
-        self.g.setData([float(0)] * 11)
+    #     self.app.nb2.setData()
+    #     self.g.setData([float(0)] * 11)
 
     def timeFrom(self, sec):
         (hr, mi) = divmod(sec, 360)
@@ -262,8 +268,8 @@ class Control:
     def stop(self):
         pass
 
+
 if __name__ == '__main__':
-    root = Tk()
-    root.title("Cycle Time Calculator")
+    root = tk.Tk()
     app = Control(root)
     root.mainloop()
