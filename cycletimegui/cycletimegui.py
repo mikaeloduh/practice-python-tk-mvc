@@ -54,7 +54,7 @@ class Control:
         self.root.title("Cycle Time Calculator")
 
         self.view = MainView(master=self.root)
-        self.view.nb2.calcuateBtn.config(command=self.doCalcuate)
+        self.view.nb2.calcuate_button.config(command=self.doCalcuate)
 
         self.statusbar = StatusBar(master=self.root)
 
@@ -72,13 +72,13 @@ class Control:
 
     def newData(self):
         try:
-            del self.g
+            del self.gear
             del self.file_path
         except AttributeError:
             pass
-        self.g = Gear()
-        self.g.addObserver(self.dataUpdate)
-        self.g.notify()
+        self.gear = Gear()
+        self.gear.addObserver(self.dataUpdate)
+        self.gear.notify()
         self.statusbar.config(text = "Please input data.")
 
     def openData(self):
@@ -86,7 +86,7 @@ class Control:
         if self.file_path:
             with open(self.file_path, 'r') as f:
                 data = json.load(f)
-            self.g.setData(data)
+            self.gear.setData(data)
             self.statusbar.config(text = "File Loaded!")
 
     # input: CycleTime.data, Gear.data
@@ -97,14 +97,14 @@ class Control:
 
         try:
             with open(self.file_path, 'w') as f:
-                data = self.g.getData()
+                data = self.gear.getData()
                 json.dump(data, f, indent=4)
                 self.statusbar.config(text = self.file_path + ' Saved!')
         except (AttributeError, FileNotFoundError):
             self.file_path = filedialog.asksaveasfilename(**self.file_opt)
             if self.file_path:
                 with open(self.file_path, 'w') as f:
-                    data = self.g.getData()
+                    data = self.gear.getData()
                     json.dump(data, f, indent=4)
                     self.statusbar.config(text = self.file_path + ' Saved!')
 
@@ -112,7 +112,7 @@ class Control:
         self.file_path = filedialog.asksaveasfilename(**self.file_opt)
         if self.file_path:
             with open(self.file_path, 'w') as f:
-                data = self.g.getData()
+                data = self.gear.getData()
                 json.dump(data, f, indent=4)
 
     # input: config file
@@ -205,37 +205,36 @@ class Control:
                         ]
                     }
 
-            self.g.setData(data)
+            self.gear.setData(data)
             self.statusbar.config(text = ".dat File Imported!")
 
-    # input:
     def doCalcuate(self):
-        self.view.nb2.dressingTimeOutput_1.delete(0, 'end')
-        self.view.nb2.setCycleTimeOutput_1.delete(0, 'end')
-        self.view.nb2.dressingTimeOutput_2.delete(0, 'end')
-        self.view.nb2.setCycleTimeOutput_2.delete(0, 'end')
-        self.view.nb2.dressingTimeOutput_3.delete(0, 'end')
-        self.view.nb2.setCycleTimeOutput_3.delete(0, 'end')
-        self.view.nb2.dressingTimeOutput_4.delete(0, 'end')
-        self.view.nb2.setCycleTimeOutput_4.delete(0, 'end')
-        self.view.nb2.totalCycleTimeOutput.delete(0, 'end')
+        self.view.nb2.dressing_time_output_1.delete(0, 'end')
+        self.view.nb2.cycle_time_set_output_1.delete(0, 'end')
+        self.view.nb2.dressing_time_output_2.delete(0, 'end')
+        self.view.nb2.cycle_time_set_output_2.delete(0, 'end')
+        self.view.nb2.dressing_time_output_3.delete(0, 'end')
+        self.view.nb2.cycle_time_set_output_3.delete(0, 'end')
+        self.view.nb2.dressing_time_output_4.delete(0, 'end')
+        self.view.nb2.cycle_time_set_output_4.delete(0, 'end')
+        self.view.nb2.cycle_time_total_output.delete(0, 'end')
         try:
             data = self.view.nb2.getData()
             data.update(self.view.nb1.getData())
         except ValueError:
             self.statusbar.config(text = "Invalid input!")
         else:
-            self.g.setData(data)
-            self.g.toCalculate()
-            self.view.nb2.dressingTimeOutput_1.insert('end', self.timeFrom(int(self.g.dressTime_1)))
-            self.view.nb2.setCycleTimeOutput_1.insert('end', self.timeFrom(int(self.g.grindTime_1)))
-            self.view.nb2.dressingTimeOutput_2.insert('end', self.timeFrom(int(self.g.dressTime_2)))
-            self.view.nb2.setCycleTimeOutput_2.insert('end', self.timeFrom(int(self.g.grindTime_2)))
-            self.view.nb2.dressingTimeOutput_3.insert('end', self.timeFrom(int(self.g.dressTime_3)))
-            self.view.nb2.setCycleTimeOutput_3.insert('end', self.timeFrom(int(self.g.grindTime_3)))
-            self.view.nb2.dressingTimeOutput_4.insert('end', self.timeFrom(int(self.g.dressTime_4)))
-            self.view.nb2.setCycleTimeOutput_4.insert('end', self.timeFrom(int(self.g.grindTime_4)))
-            self.view.nb2.totalCycleTimeOutput.insert('end', self.timeFrom(int(self.g.cycleTime)))
+            self.gear.setData(data)
+            self.gear.toCalculate()
+            self.view.nb2.dressing_time_output_1.insert('end', self.timeFrom(int(self.gear.dressTime_1)))
+            self.view.nb2.cycle_time_set_output_1.insert('end', self.timeFrom(int(self.gear.grindTime_1)))
+            self.view.nb2.dressing_time_output_2.insert('end', self.timeFrom(int(self.gear.dressTime_2)))
+            self.view.nb2.cycle_time_set_output_2.insert('end', self.timeFrom(int(self.gear.grindTime_2)))
+            self.view.nb2.dressing_time_output_3.insert('end', self.timeFrom(int(self.gear.dressTime_3)))
+            self.view.nb2.cycle_time_set_output_3.insert('end', self.timeFrom(int(self.gear.grindTime_3)))
+            self.view.nb2.dressing_time_output_4.insert('end', self.timeFrom(int(self.gear.dressTime_4)))
+            self.view.nb2.cycle_time_set_output_4.insert('end', self.timeFrom(int(self.gear.grindTime_4)))
+            self.view.nb2.cycle_time_total_output.insert('end', self.timeFrom(int(self.gear.cycleTime)))
             self.statusbar.config(text = "Success!")
 
     def dataUpdate(self, data):
@@ -258,7 +257,7 @@ class Control:
     #     f.close()
 
     #     self.app.nb2.setData()
-    #     self.g.setData([float(0)] * 11)
+    #     self.gear.setData([float(0)] * 11)
 
     def timeFrom(self, sec):
         (hr, mi) = divmod(sec, 360)
