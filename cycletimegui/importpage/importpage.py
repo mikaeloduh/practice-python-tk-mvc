@@ -65,23 +65,23 @@ class ImportPage(tk.Frame):
         self.thread_length_entry.grid(row=9, column=1, columnspan=3)
 
     def getData(self):
-        # Try to make it a float
-        self.data["parts"]["productID"] = self.part_no_entry.get()
-        self.data["parts"]["module"] = float(self.dp_entry.get())
-        self.data["parts"]["normPressAng_d"] = int(self.normal_pa_entry_1.get())
-        self.data["parts"]["normPressAng_m"] = int(self.normal_pa_entry_2.get())
-        self.data["parts"]["normPressAng_s"] = int(self.normal_pa_entry_3.get())
-        self.data["parts"]["starts"] = int(self.start_entry.get())
-        self.data["parts"]["pitchDia"] = float(self.pitch_dia_entry.get())
-        self.data["parts"]["outDia"] = float(self.outside_dia_entry.get())
-        self.data["parts"]["rootDia"] = float(self.roote_dia_entry.get())
-        self.data["parts"]["leadAng_d"] = int(self.lead_angle_entry_1.get())
-        self.data["parts"]["leadAng_m"] = int(self.lead_angle_entry_2.get())
-        self.data["parts"]["leadAng_s"] = int(self.lead_angle_entry_3.get())
-        self.data["parts"]["toothThick"] = float(self.tooth_thickn_entry.get())
-        self.data["parts"]["threadLen"] = float(self.thread_length_entry.get())
+        data = {}
+        data["productID"] = self.part_no_entry.get()
+        data["module"] = float(self.dp_entry.get())
+        data["normPressAng_d"] = int(self.normal_pa_entry_1.get())
+        data["normPressAng_m"] = int(self.normal_pa_entry_2.get())
+        data["normPressAng_s"] = int(self.normal_pa_entry_3.get())
+        data["starts"] = int(self.start_entry.get())
+        data["pitchDia"] = float(self.pitch_dia_entry.get())
+        data["outDia"] = float(self.outside_dia_entry.get())
+        data["rootDia"] = float(self.roote_dia_entry.get())
+        data["leadAng_d"] = int(self.lead_angle_entry_1.get())
+        data["leadAng_m"] = int(self.lead_angle_entry_2.get())
+        data["leadAng_s"] = int(self.lead_angle_entry_3.get())
+        data["toothThick"] = float(self.tooth_thickn_entry.get())
+        data["threadLen"] = float(self.thread_length_entry.get())
 
-        return self.data
+        return data
 
     def setData(self, data):
         self.data = data

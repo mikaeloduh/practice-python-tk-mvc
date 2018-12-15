@@ -24,7 +24,10 @@ class MainView(tk.Frame):
         self.nb.add(self.nb2, text="Machining Cycle")
 
     def getData(self):
-        pass
+        data = {}
+        data['parts'] = self.nb1.getData()
+        data['machining'] = self.nb2.getData()
+        return data
 
     def setData(self, data):
         self.workIdEntry.config(text = str(data["workID"]))
@@ -89,12 +92,8 @@ class Control:
             self.gear.setData(data)
             self.statusbar.config(text = "File Loaded!")
 
-    # input: CycleTime.data, Gear.data
-    # output: config file
     def saveData(self):
-        data = self.view.nb2.getData()
-        data.update(self.view.nb1.getData())
-
+        data  = self.view.getData()
         try:
             with open(self.file_path, 'w') as f:
                 data = self.gear.getData()
@@ -205,67 +204,25 @@ class Control:
                         ]
                     }
 
+            self.newData()
             self.gear.setData(data)
             self.statusbar.config(text = ".dat File Imported!")
 
     def doCalcuate(self):
-        self.view.nb2.dressing_time_output_1.delete(0, 'end')
-        self.view.nb2.cycle_time_set_output_1.delete(0, 'end')
-        self.view.nb2.dressing_time_output_2.delete(0, 'end')
-        self.view.nb2.cycle_time_set_output_2.delete(0, 'end')
-        self.view.nb2.dressing_time_output_3.delete(0, 'end')
-        self.view.nb2.cycle_time_set_output_3.delete(0, 'end')
-        self.view.nb2.dressing_time_output_4.delete(0, 'end')
-        self.view.nb2.cycle_time_set_output_4.delete(0, 'end')
-        self.view.nb2.cycle_time_total_output.delete(0, 'end')
         try:
-            data = self.view.nb2.getData()
-            data.update(self.view.nb1.getData())
+            data = self.view.getData()
         except ValueError:
             self.statusbar.config(text = "Invalid input!")
         else:
             self.gear.setData(data)
-            self.gear.toCalculate()
-            self.view.nb2.dressing_time_output_1.insert('end', self.timeFrom(int(self.gear.dressTime_1)))
-            self.view.nb2.cycle_time_set_output_1.insert('end', self.timeFrom(int(self.gear.grindTime_1)))
-            self.view.nb2.dressing_time_output_2.insert('end', self.timeFrom(int(self.gear.dressTime_2)))
-            self.view.nb2.cycle_time_set_output_2.insert('end', self.timeFrom(int(self.gear.grindTime_2)))
-            self.view.nb2.dressing_time_output_3.insert('end', self.timeFrom(int(self.gear.dressTime_3)))
-            self.view.nb2.cycle_time_set_output_3.insert('end', self.timeFrom(int(self.gear.grindTime_3)))
-            self.view.nb2.dressing_time_output_4.insert('end', self.timeFrom(int(self.gear.dressTime_4)))
-            self.view.nb2.cycle_time_set_output_4.insert('end', self.timeFrom(int(self.gear.grindTime_4)))
-            self.view.nb2.cycle_time_total_output.insert('end', self.timeFrom(int(self.gear.cycleTime)))
+            result = self.gear.toCalculate()
+            self.view.nb2.set_result(result)
             self.statusbar.config(text = "Success!")
 
     def dataUpdate(self, data):
         self.view.nb2.setData(data)
         self.view.nb1.setData(data)
         self.view.setData(data)
-
-    def statusText(self, text):
-        self.statusbar.config(text = text)
-
-    # def readFile(self):
-    #     filename = filedialog.askopenfilename()
-    #     f = open(filename, 'r', encoding="big5")
-    #     item = data = []
-    #     for i in range(185):
-    #         line = f.readline()
-    #         j = line.find(',')
-    #         item.append(line[0:j])
-    #         value.append(line[j+1:])
-    #     f.close()
-
-    #     self.app.nb2.setData()
-    #     self.gear.setData([float(0)] * 11)
-
-    def timeFrom(self, sec):
-        (hr, mi) = divmod(sec, 360)
-        (mi, sec) = divmod(mi, 60)
-        return str(hr) + ':' + str(mi) + ':' + str(sec)
-
-    def stop(self):
-        pass
 
 
 if __name__ == '__main__':
