@@ -3,41 +3,50 @@ from tkinter import ttk
 from tkinter import filedialog
 import os
 import json
-from gear import Gear
-from importpage import ImportPage
-from cycletimepage import CycleTimePage
+from cycletimegui import Gear
+# from importpage import ImportPage
+# from cycletimepage import CycleTimePage
+from cycletimegui import MainView
 
 
-class MainView(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.pack()
+# class MainView(tk.Frame):
+#     def __init__(self, master=None):
+#         super().__init__(master)
+#         self.pack()
 
-        self.workIdEntry = tk.Label(self, justify="center")
-        self.workIdEntry.pack()
+#         self.workIdEntry = tk.Label(self, justify="center")
+#         self.workIdEntry.pack()
 
-        self.nb = ttk.Notebook(self)
-        self.nb.pack()
-        self.nb1 = ImportPage(self.nb)
-        self.nb2 = CycleTimePage(self.nb)
-        self.nb.add(self.nb1, text="Gear Data")
-        self.nb.add(self.nb2, text="Machining Cycle")
+#         self.tabbar = ttk.Notebook(self)
+#         self.tabbar.pack()
+#         self.import_tab = ImportPage(self.tabbar)
+#         self.cycletime_tab = CycleTimePage(self.tabbar)
+#         self.tabbar.add(self.import_tab, text="Gear Data")
+#         self.tabbar.add(self.cycletime_tab, text="Machining Cycle")
 
-    def getData(self):
-        data = {}
-        data['parts'] = self.nb1.getData()
-        data['machining'] = self.nb2.getData()
-        return data
+#         self.menubar = tk.Menu(self)
+#         self.file_menu = tk.Menu(self.menubar, tearoff=0)        
+#         self.menubar.add_cascade(label = "File", menu=self.file_menu)
 
-    def setData(self, data):
-        self.workIdEntry.config(text = str(data["workID"]))
+#         self.statusbar = StatusBar(master)
+
+#     def getData(self):
+#         data = {}
+#         data['parts'] = self.import_tab.getData()
+#         data['machining'] = self.cycletime_tab.getData()
+#         return data
+
+#     def setData(self, data):
+#         self.import_tab.setData(data)
+#         self.cycletime_tab.setData(data)
+#         self.workIdEntry.config(text = str(data["workID"]))
 
 
-class StatusBar(tk.Label):
-    def __init__(self, master):
-        super().__init__(master)
-        self.config(text = "Welcome~~", relief="sunken", anchor="w")
-        self.pack(side="bottom", fill="x")
+# class StatusBar(tk.Label):
+#     def __init__(self, master):
+#         super().__init__(master)
+#         self.config(text = "Welcome~~", relief="sunken", anchor="w")
+#         self.pack(side="bottom", fill="x")
 
 
 class Control:
@@ -57,21 +66,16 @@ class Control:
         self.root.title("Cycle Time Calculator")
 
         self.view = MainView(master=self.root)
-        self.view.nb2.calcuate_button.config(command=self.doCalcuate)
+        self.view.cycletime_tab.calcuate_button.config(command=self.doCalcuate)
 
-        self.statusbar = StatusBar(master=self.root)
-
-        menubar = tk.Menu(master=self.root)
-        self.filemenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label = "File", menu=self.filemenu)
-        self.filemenu.add_command(label = "New", command=self.newData)
-        self.filemenu.add_command(label = "Open", command=self.openData)
-        self.filemenu.add_command(label = "Save", command=self.saveData)
-        self.filemenu.add_command(label = "Save As...", command=self.saveAs)
-        self.filemenu.add_command(label = "Import", command=self.loadData)
-        self.filemenu.add_separator()
-        self.filemenu.add_command(label = "Exit", command=self.root.quit)
-        self.root.config(menu=menubar)
+        self.view.file_menu.add_command(label = "New", command=self.newData)
+        self.view.file_menu.add_command(label = "Open", command=self.openData)
+        self.view.file_menu.add_command(label = "Save", command=self.saveData)
+        self.view.file_menu.add_command(label = "Save As...", command=self.saveAs)
+        self.view.file_menu.add_command(label = "Import", command=self.loadData)
+        self.view.file_menu.add_separator()
+        self.view.file_menu.add_command(label = "Exit", command=self.root.quit)        
+        self.root.config(menu=self.view.menubar)
 
     def newData(self):
         try:
@@ -80,9 +84,9 @@ class Control:
         except AttributeError:
             pass
         self.gear = Gear()
-        self.gear.addObserver(self.dataUpdate)
+        self.gear.addObserver(self.view.setData)
         self.gear.notify()
-        self.statusbar.config(text = "Please input data.")
+        self.view.statusbar.config(text = "Please input data.")
 
     def openData(self):
         self.file_path = filedialog.askopenfilename(**self.file_opt)
@@ -90,7 +94,7 @@ class Control:
             with open(self.file_path, 'r') as f:
                 data = json.load(f)
             self.gear.setData(data)
-            self.statusbar.config(text = "File Loaded!")
+            self.view.statusbar.config(text = "File Loaded!")
 
     def saveData(self):
         data  = self.view.getData()
@@ -105,7 +109,7 @@ class Control:
                 with open(self.file_path, 'w') as f:
                     data = self.gear.getData()
                     json.dump(data, f, indent=4)
-                    self.statusbar.config(text = self.file_path + ' Saved!')
+                    self.view.statusbar.config(text = self.file_path + ' Saved!')
 
     def saveAs(self):
         self.file_path = filedialog.asksaveasfilename(**self.file_opt)
@@ -206,23 +210,18 @@ class Control:
 
             self.newData()
             self.gear.setData(data)
-            self.statusbar.config(text = ".dat File Imported!")
+            self.view.statusbar.config(text = ".dat File Imported!")
 
     def doCalcuate(self):
         try:
             data = self.view.getData()
         except ValueError:
-            self.statusbar.config(text = "Invalid input!")
+            self.view.statusbar.config(text = "Invalid input!")
         else:
             self.gear.setData(data)
             result = self.gear.toCalculate()
-            self.view.nb2.set_result(result)
-            self.statusbar.config(text = "Success!")
-
-    def dataUpdate(self, data):
-        self.view.nb2.setData(data)
-        self.view.nb1.setData(data)
-        self.view.setData(data)
+            self.view.cycletime_tab.set_result(result)
+            self.view.statusbar.config(text = "Success!")
 
 
 if __name__ == '__main__':
